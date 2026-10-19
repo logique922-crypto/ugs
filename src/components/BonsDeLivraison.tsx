@@ -270,7 +270,7 @@ export default function BonsDeLivraison({
         email: '',
         adresse: formAdresseLivraison || '',
         ville: '',
-        type: 'Standard',
+        typeTier: 'Particulier',
         plafondCredit: 0,
         statut: 'Actif',
         dateCreation: new Date().toISOString().split('T')[0],

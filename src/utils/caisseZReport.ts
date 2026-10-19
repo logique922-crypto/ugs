@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { SessionCaisse, Projet, Vente, Reglement, Utilisateur } from '../types';
+import { SessionCaisse, Projet, Vente, Reglement, Utilisateur, RetourVente } from '../types';
 
 export function generateZReportPdf({
   session,

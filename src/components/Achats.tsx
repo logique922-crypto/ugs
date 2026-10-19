@@ -267,7 +267,7 @@ export function Achats({
         email: '',
         adresse: '',
         ville: '',
-        categorie: 'Local',
+        categorie: 'Grossiste',
         statut: 'Actif',
         dateCreation: new Date().toISOString().split('T')[0],
         totalAchats: 0,

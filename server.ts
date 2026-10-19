@@ -631,6 +631,23 @@ async function initDatabaseAndSeed() {
     await addIndexSafely('sessions_caisse', 'idx_sess_statut', 'statut');
     
     console.log("✅ [MySQL] Base de données, schémas et index initialisés avec succès.");
+
+    // Seed initial mock data from database.json if database has 0 articles
+    try {
+      const [artRows] = await db.query("SELECT COUNT(*) as count FROM articles");
+      if ((artRows as any)[0]?.count === 0) {
+        console.log("🌱 [Seed] Table 'articles' vide. Injection automatique des mock data...");
+        const dbJsonPath = path.join(process.cwd(), 'data', 'database.json');
+        if (fs.existsSync(dbJsonPath)) {
+          const raw = fs.readFileSync(dbJsonPath, 'utf-8');
+          const json = JSON.parse(raw);
+          await saveAllDataToDb(json);
+          console.log("✅ [Seed] Importation des mock data terminée avec succès.");
+        }
+      }
+    } catch (e: any) {
+      console.warn("⚠️ [Seed] Warning lors de la vérification/injection des mock data:", e.message);
+    }
   } catch (err: any) {
     console.error("❌ [MySQL] Erreur d'initialisation de la base :", err);
   }
@@ -2261,6 +2278,21 @@ app.get('/api/db/test', async (req, res) => {
 app.get('/api/db/seed', async (req, res) => {
   await initDatabaseAndSeed();
   res.json({ success: true, message: "Base de données réinitialisée." });
+});
+
+app.post('/api/seed-mock-data', async (req, res) => {
+  try {
+    const dbJsonPath = path.join(process.cwd(), 'data', 'database.json');
+    if (fs.existsSync(dbJsonPath)) {
+      const raw = fs.readFileSync(dbJsonPath, 'utf-8');
+      const json = JSON.parse(raw);
+      await saveAllDataToDb(json);
+    }
+    const result = await getInitialData();
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.get('/api/initial-data', async (req, res) => {

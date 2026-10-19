@@ -127,40 +127,44 @@ export default function App() {
     localStorage.setItem('ugs_active_tab', activeTab);
   }, [activeTab]);
 
-  // Global State for ERP Entities (Strictly connected to the persistent database, 0 mock business records)
+  // Global State for ERP Entities with rich default mock data
   const [projets, setProjets] = useState<Projet[]>(initialProjets);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [mouvements, setMouvements] = useState<MouvementStock[]>([]);
-  const [clients, setClients] = useState<Client[]>([]);
-  const [fournisseurs, setFournisseurs] = useState<Fournisseur[]>([]);
-  const [ventes, setVentes] = useState<Vente[]>([]);
-  const [achats, setAchats] = useState<Achat[]>([]);
-  const [reglements, setReglements] = useState<Reglement[]>([]);
-  const [relances, setRelances] = useState<RelanceClient[]>([]);
-  const [objectifs, setObjectifs] = useState<any[]>([]);
+  const [articles, setArticles] = useState<Article[]>(initialArticles);
+  const [mouvements, setMouvements] = useState<MouvementStock[]>(initialMouvements);
+  const [clients, setClients] = useState<Client[]>(initialClients);
+  const [fournisseurs, setFournisseurs] = useState<Fournisseur[]>(initialFournisseurs);
+  const [ventes, setVentes] = useState<Vente[]>(initialVentes);
+  const [achats, setAchats] = useState<Achat[]>(initialAchats);
+  const [reglements, setReglements] = useState<Reglement[]>(initialReglements);
+  const [relances, setRelances] = useState<RelanceClient[]>(initialRelances);
+  const [objectifs, setObjectifs] = useState<any[]>(initialObjectifs);
   const [utilisateurs, setUtilisateurs] = useState<Utilisateur[]>(mockUsers);
   const [sessionsCaisse, setSessionsCaisse] = useState<SessionCaisse[]>(() => {
     try {
       const saved = localStorage.getItem('ugs_sessions_caisse');
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      return initialSessionsCaisse;
     } catch {
-      return [];
+      return initialSessionsCaisse;
     }
   });
-  const [actionLogs, setActionLogs] = useState<SessionActionLog[]>([]);
+  const [actionLogs, setActionLogs] = useState<SessionActionLog[]>(initialActionLogsCaisse);
 
   // Bon de Livraison (BL), Bon d'Achat (BA), Bon de Sortie (BS) States
-  const [bonsDeLivraison, setBonsDeLivraison] = useState<BonDeLivraison[]>([]);
-  const [bonsDAchat, setBonsDAchat] = useState<BonDAchat[]>([]);
-  const [bonsDeSortie, setBonsDeSortie] = useState<BonDeSortie[]>([]);
-  const [stockOperations, setStockOperations] = useState<StockOperation[]>([]);
-  const [retoursMarchandise, setRetoursMarchandise] = useState<RetourMarchandise[]>([]);
-  const [retoursVente, setRetoursVente] = useState<RetourVente[]>([]);
+  const [bonsDeLivraison, setBonsDeLivraison] = useState<BonDeLivraison[]>(initialBonsDeLivraison);
+  const [bonsDAchat, setBonsDAchat] = useState<BonDAchat[]>(initialBonsDAchat);
+  const [bonsDeSortie, setBonsDeSortie] = useState<BonDeSortie[]>(initialBonsDeSortie);
+  const [stockOperations, setStockOperations] = useState<StockOperation[]>(initialStockOperations);
+  const [retoursMarchandise, setRetoursMarchandise] = useState<RetourMarchandise[]>(initialRetoursMarchandise);
+  const [retoursVente, setRetoursVente] = useState<RetourVente[]>(mockRetoursVente);
 
   const [isLoading, setIsLoading] = useState(true);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
 
-  // On mount, load actual data from the live MySQL database
+  // On mount, load actual data from the live server/database
   React.useEffect(() => {
     async function fetchDBData() {
       try {
@@ -168,23 +172,22 @@ export default function App() {
         const json = await response.json();
         if (json.success && json.data) {
           const d = json.data;
-          if (d.projets) setProjets(d.projets);
-          if (d.articles) setArticles(d.articles);
-          if (d.clients) setClients(d.clients);
-          if (d.fournisseurs) setFournisseurs(d.fournisseurs);
-          if (d.utilisateurs) setUtilisateurs(d.utilisateurs);
-          if (d.mouvements) setMouvements(d.mouvements);
-          if (d.ventes) setVentes(d.ventes);
-          if (d.achats) setAchats(d.achats);
-          if (d.reglements) setReglements(d.reglements);
-          if (d.bonsDeLivraison) setBonsDeLivraison(d.bonsDeLivraison);
-          if (d.bonsDAchat) setBonsDAchat(d.bonsDAchat);
-          if (d.bonsDeSortie) setBonsDeSortie(d.bonsDeSortie);
-          if (d.sessionsCaisse && Array.isArray(d.sessionsCaisse)) {
+          if (d.projets && d.projets.length > 0) setProjets(d.projets);
+          if (d.articles && d.articles.length > 0) setArticles(d.articles);
+          if (d.clients && d.clients.length > 0) setClients(d.clients);
+          if (d.fournisseurs && d.fournisseurs.length > 0) setFournisseurs(d.fournisseurs);
+          if (d.utilisateurs && d.utilisateurs.length > 0) setUtilisateurs(d.utilisateurs);
+          if (d.mouvements && d.mouvements.length > 0) setMouvements(d.mouvements);
+          if (d.ventes && d.ventes.length > 0) setVentes(d.ventes);
+          if (d.achats && d.achats.length > 0) setAchats(d.achats);
+          if (d.reglements && d.reglements.length > 0) setReglements(d.reglements);
+          if (d.bonsDeLivraison && d.bonsDeLivraison.length > 0) setBonsDeLivraison(d.bonsDeLivraison);
+          if (d.bonsDAchat && d.bonsDAchat.length > 0) setBonsDAchat(d.bonsDAchat);
+          if (d.bonsDeSortie && d.bonsDeSortie.length > 0) setBonsDeSortie(d.bonsDeSortie);
+          if (d.sessionsCaisse && Array.isArray(d.sessionsCaisse) && d.sessionsCaisse.length > 0) {
             setSessionsCaisse(prev => {
               const map = new Map<string, SessionCaisse>();
               d.sessionsCaisse.forEach((s: SessionCaisse) => map.set(s.id, s));
-              // Si une session locale est encore ouverte et non présente dans le lot serveur, la conserver
               prev.forEach((s: SessionCaisse) => {
                 if (!map.has(s.id) && s.statut === 'Ouverte') {
                   map.set(s.id, s);
@@ -197,10 +200,10 @@ export default function App() {
               return merged;
             });
           }
-          if (d.stockOperations) setStockOperations(d.stockOperations);
-          if (d.retoursMarchandise) setRetoursMarchandise(d.retoursMarchandise);
-          if (d.retoursVente) setRetoursVente(d.retoursVente);
-          if (d.auditLogs) setAuditLogs(d.auditLogs);
+          if (d.stockOperations && d.stockOperations.length > 0) setStockOperations(d.stockOperations);
+          if (d.retoursMarchandise && d.retoursMarchandise.length > 0) setRetoursMarchandise(d.retoursMarchandise);
+          if (d.retoursVente && d.retoursVente.length > 0) setRetoursVente(d.retoursVente);
+          if (d.auditLogs && d.auditLogs.length > 0) setAuditLogs(d.auditLogs);
         }
       } catch (error) {
         console.error("Erreur de chargement des données depuis MySQL:", error);

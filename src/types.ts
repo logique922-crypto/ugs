@@ -65,6 +65,7 @@ export interface AuditLog {
   utilisateurEmail: string;
   projetId?: string;
   projetNom?: string;
+  boutiqueNom?: string;
   action: string;
   categorie: 'Sécurité' | 'Métier' | 'Financier' | 'Système';
   ancienneValeur?: string;
@@ -129,13 +130,15 @@ export interface Article {
   stockMinimums?: Record<string, number>; // Mapping: projetId -> quantité minimale
   
   stock?: number; // legacy / helper field
+  stockGlobal?: number; // helper field
   stockMinimum?: number; // legacy / helper field
+  stockSecurite?: number; // helper field
   seuilAlerte?: number; // legacy support
-  
+
   depotPrincipal?: string;
   emplacement?: string;
   fournisseurPrincipalId?: string;
-  
+
   statut?: 'Actif' | 'Inactif';
   statsCommerciales?: {
     ventesCount: number;
@@ -164,6 +167,7 @@ export interface Client {
   plafondCredit?: number;
   delaiPaiement?: number; // en jours (ex: 0, 30, 45, 60)
   soldeInitial?: number;
+  soldeCredit?: number;
   rib?: string;
   banque?: string;
   notes?: string;
@@ -178,6 +182,10 @@ export interface Client {
   totalAchatsBoutique?: number;
   nombrePassagesCaisse?: number;
   derniereVisiteDate?: string;
+  dateCreation?: string;
+  totalAchats?: number;
+  solde?: number;
+  historique?: any[];
 }
 
 export interface Fournisseur {
@@ -207,6 +215,9 @@ export interface Fournisseur {
   banque?: string;
   notes?: string;
   evaluationQualite?: number; // 1-5 étoiles
+  dateCreation?: string;
+  totalAchats?: number;
+  soldeDu?: number;
 }
 
 export interface LigneVente {
@@ -429,6 +440,7 @@ export interface BonDeLivraison {
   
   // Références croisées
   commandeRef?: string; // Ex: CMD-2026-000087
+  commandeId?: string;
   devisRef?: string;
   factureRef?: string; // Ex: FAC-2026-000098
   venteSourceId?: string; // ID de la Vente / Commande d'origine
@@ -701,23 +713,31 @@ export interface BonDeSortie {
   numero: string; // Ex: BS-2026-000032
   projetId: string; // Entrepôt / Source store
   boutiqueNom?: string;
+  typeSortie?: string;
   dateCreation: string;
+  dateSortie?: string;
   heureCreation?: string;
   statut: StatutBS;
   auteurId?: string;
   auteurNom?: string;
   demandeur: string; // Demandeur interne
-  serviceDepartement: string; // Service / Département
+  validePar?: string;
+  serviceDepartement?: string; // Service / Département
   responsableValidation?: string;
   motif: MotifSortieBS;
   motifJustification?: string;
+  notes?: string;
+  montantHT?: number;
+  montantTTC?: number;
   entrepotSource?: string;
   destinationBoutiqueId?: string; // Boutique réceptrice pour les transferts
   destinationBoutiqueNom?: string;
+  projetDestinationId?: string;
+  projetDestinationNom?: string;
   lignes: LigneBS[];
   observations?: string;
   piecesJointes?: string[];
-  isStockDecremented: boolean; // Anti-double décrémentation
+  isStockDecremented?: boolean; // Anti-double décrémentation
   stockOperationId?: string; // Ex: OUT-2026-000099
   exceptionStockNegatifValidee?: boolean;
   historiqueStatuts?: Array<{

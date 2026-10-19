@@ -1,4 +1,4 @@
-import { Article, AuditLog, Client, Fournisseur, Projet, Utilisateur, RetourVente, RetourMarchandise, BonDeLivraison, BonDAchat, BonDeSortie, StockOperation, SessionCaisse, SessionActionLog } from './types';
+import { Article, AuditLog, Client, Fournisseur, Projet, Utilisateur, Vente, Achat, Reglement, BonDeLivraison, BonDAchat, BonDeSortie, MouvementStock, SessionCaisse, SessionActionLog, StockOperation, RetourMarchandise, RetourVente } from './types';
 
 export const mockUsers: Utilisateur[] = [
   { 
@@ -148,7 +148,28 @@ export const mockUsers: Utilisateur[] = [
   }
 ];
 
-export const mockAuditLogs: AuditLog[] = [];
+export const mockAuditLogs: AuditLog[] = [
+  {
+    id: 'aud-001',
+    timestamp: '19/10/2026 08:30:12',
+    utilisateurNom: 'Super Admin',
+    utilisateurEmail: 'superadmin@erp-management.com',
+    projetId: '1',
+    action: 'Connexion au système',
+    categorie: 'Sécurité',
+    nouvelleValeur: 'Connexion réussie depuis IP 197.28.140.12'
+  },
+  {
+    id: 'aud-002',
+    timestamp: '19/10/2026 09:12:45',
+    utilisateurNom: 'Mohamed Ali',
+    utilisateurEmail: 'admin@erp-management.com',
+    projetId: '1',
+    action: 'Création Vente FAC-2026-00004',
+    categorie: 'Métier',
+    nouvelleValeur: 'Vente 1 475.600 DT à Entreprise Al Boughaz Réseaux'
+  }
+];
 
 export const mockProjets: Projet[] = [
   { 
@@ -210,27 +231,876 @@ export const mockProjets: Projet[] = [
   }
 ];
 
-// All business entities are 100% clean and driven strictly by the database
-export const mockArticles: Article[] = [];
-export const mockClients: Client[] = [];
-export const mockFournisseurs: Fournisseur[] = [];
-export const mockVentes: any[] = [];
-export const mockAchats: any[] = [];
-export const mockReglements: any[] = [];
+export const mockArticles: Article[] = [
+  {
+    id: 'art-001',
+    code: 'ART-GSM-001',
+    codeBarres: ['8806091234567'],
+    designation: 'Samsung Galaxy A55 5G (8GB / 256GB) - Noir',
+    description: 'Smartphone Samsung Galaxy A55 5G, Écran Super AMOLED 6.6", 120Hz, 8 Go RAM, 256 Go stockage, Triple Caméra 50 MP, Batterie 5000 mAh.',
+    famille: 'Téléphonie & Tablettes',
+    categorie: 'Téléphonie & Tablettes',
+    marque: 'Samsung',
+    uniteMesure: 'Pièce',
+    typeArticle: 'Produit',
+    prixAchatHT: 1150.000,
+    prixVenteHT: 1380.000,
+    tva: 19,
+    margeBeneficiaire: 20,
+    stockGlobal: 44,
+    stockSecurite: 5,
+    stocks: { '1': 28, '2': 4, '3': 12 },
+    stockMinimums: { '1': 5, '2': 2, '3': 2 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-002',
+    code: 'ART-GSM-002',
+    codeBarres: ['6934177701234'],
+    designation: 'Xiaomi Redmi Note 13 Pro+ 5G (12GB / 512GB)',
+    description: 'Smartphone Xiaomi Redmi Note 13 Pro+ 5G, Écran AMOLED 1.5K 120Hz, IP68, 200MP OIS, Charge 120W HyperCharge.',
+    famille: 'Téléphonie & Tablettes',
+    categorie: 'Téléphonie & Tablettes',
+    marque: 'Xiaomi',
+    uniteMesure: 'Pièce',
+    typeArticle: 'Produit',
+    prixAchatHT: 1220.000,
+    prixVenteHT: 1450.000,
+    tva: 19,
+    margeBeneficiaire: 18.85,
+    stockGlobal: 28,
+    stockSecurite: 5,
+    stocks: { '1': 18, '2': 2, '3': 8 },
+    stockMinimums: { '1': 5, '2': 2, '3': 2 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-003',
+    code: 'ART-ACC-003',
+    codeBarres: ['8806098765432'],
+    designation: 'Chargeur Rapide Samsung 25W Type-C Original',
+    description: 'Adaptateur secteur Super Fast Charging 25W USB Type-C original Samsung avec câble Type-C vers Type-C.',
+    famille: 'Téléphonie & Tablettes',
+    categorie: 'Téléphonie & Tablettes',
+    marque: 'Samsung',
+    uniteMesure: 'Pièce',
+    typeArticle: 'Produit',
+    prixAchatHT: 28.500,
+    prixVenteHT: 45.000,
+    tva: 19,
+    margeBeneficiaire: 57.89,
+    stockGlobal: 197,
+    stockSecurite: 15,
+    stocks: { '1': 120, '2': 35, '3': 42 },
+    stockMinimums: { '1': 15, '2': 10, '3': 10 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-004',
+    code: 'ART-ACC-004',
+    codeBarres: ['194644089012'],
+    designation: 'Écouteurs Bluetooth Anker Soundcore P20i',
+    description: 'Écouteurs sans fil True Wireless Anker Soundcore P20i, Basses puissantes, Autonomie 30h, Étanche IPX5.',
+    famille: 'Téléphonie & Tablettes',
+    categorie: 'Téléphonie & Tablettes',
+    marque: 'Anker',
+    uniteMesure: 'Pièce',
+    typeArticle: 'Produit',
+    prixAchatHT: 55.000,
+    prixVenteHT: 89.000,
+    tva: 19,
+    margeBeneficiaire: 61.82,
+    stockGlobal: 100,
+    stockSecurite: 10,
+    stocks: { '1': 65, '2': 15, '3': 20 },
+    stockMinimums: { '1': 10, '2': 5, '3': 5 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-005',
+    code: 'ART-INF-005',
+    codeBarres: ['195713456789'],
+    designation: 'PC Portable Lenovo IdeaPad Slim 3 i5 12th / 16GB / 512GB',
+    description: 'Ordinateur portable Lenovo IdeaPad Slim 3 15IAH8, Écran 15.6" FHD, Intel Core i5-12450H, 16 Go DDR4, 512 Go SSD NVMe.',
+    famille: 'Informatique',
+    categorie: 'Informatique',
+    marque: 'Lenovo',
+    uniteMesure: 'Pièce',
+    typeArticle: 'Produit',
+    prixAchatHT: 1420.000,
+    prixVenteHT: 1680.000,
+    tva: 19,
+    margeBeneficiaire: 18.31,
+    stockGlobal: 12,
+    stockSecurite: 3,
+    stocks: { '1': 8, '2': 1, '3': 3 },
+    stockMinimums: { '1': 3, '2': 1, '3': 1 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-006',
+    code: 'ART-RES-006',
+    codeBarres: ['6935364010123'],
+    designation: 'Routeur TP-Link Archer AX12 WiFi 6 AX1500',
+    description: 'Routeur TP-Link Archer AX12, WiFi 6 haut débit jusqu a 1500 Mbps, 4 antennes externes, technologie OFDMA.',
+    famille: 'Réseau & Câblage',
+    categorie: 'Réseau & Câblage',
+    marque: 'TP-Link',
+    uniteMesure: 'Pièce',
+    typeArticle: 'Produit',
+    prixAchatHT: 115.000,
+    prixVenteHT: 159.000,
+    tva: 19,
+    margeBeneficiaire: 38.26,
+    stockGlobal: 67,
+    stockSecurite: 8,
+    stocks: { '1': 45, '2': 8, '3': 14 },
+    stockMinimums: { '1': 8, '2': 2, '3': 3 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-007',
+    code: 'ART-RES-007',
+    codeBarres: ['4012345678901'],
+    designation: 'Câble Réseau UTP Cat6 305m Draka Outdoor',
+    description: 'Touret de câble réseau catégorie 6 UTP 305 mètres, 100% Cuivre, gaine renforcée PE pour extérieure/intérieure.',
+    famille: 'Réseau & Câblage',
+    categorie: 'Réseau & Câblage',
+    marque: 'Draka',
+    uniteMesure: 'Touret',
+    typeArticle: 'Produit',
+    prixAchatHT: 210.000,
+    prixVenteHT: 280.000,
+    tva: 19,
+    margeBeneficiaire: 33.33,
+    stockGlobal: 31,
+    stockSecurite: 5,
+    stocks: { '1': 22, '2': 3, '3': 6 },
+    stockMinimums: { '1': 5, '2': 1, '3': 2 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-008',
+    code: 'ART-PAP-008',
+    codeBarres: ['5602123456789'],
+    designation: 'Carton Papier A4 80g Navigator (5 rames x 500)',
+    description: 'Carton de papier d impression blanc A4 80g Navigator, haute blancheur, idéal pour imprimantes laser et copie.',
+    famille: 'Bureautique & Papeterie',
+    categorie: 'Bureautique & Papeterie',
+    marque: 'Navigator',
+    uniteMesure: 'Carton',
+    typeArticle: 'Produit',
+    prixAchatHT: 52.000,
+    prixVenteHT: 68.000,
+    tva: 19,
+    margeBeneficiaire: 30.77,
+    stockGlobal: 285,
+    stockSecurite: 20,
+    stocks: { '1': 140, '2': 95, '3': 50 },
+    stockMinimums: { '1': 20, '2': 15, '3': 10 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-009',
+    code: 'ART-PAP-009',
+    codeBarres: ['2160001009001'],
+    designation: 'Pack Fournitures Scolaires Supérieur UGS',
+    description: 'Pack complet rentrée scolaire comprenant cahiers grand format, stylos à bille, règle, classeur et trousse.',
+    famille: 'Bureautique & Papeterie',
+    categorie: 'Bureautique & Papeterie',
+    marque: 'Scolaire Plus',
+    uniteMesure: 'Pack',
+    typeArticle: 'Produit',
+    prixAchatHT: 42.000,
+    prixVenteHT: 65.000,
+    tva: 19,
+    margeBeneficiaire: 54.76,
+    stockGlobal: 290,
+    stockSecurite: 25,
+    stocks: { '1': 80, '2': 150, '3': 60 },
+    stockMinimums: { '1': 20, '2': 30, '3': 15 },
+    statut: 'Actif'
+  },
+  {
+    id: 'art-010',
+    code: 'ART-SRV-010',
+    codeBarres: ['2160001010001'],
+    designation: 'Service de Configuration & Installation Réseau / Heure',
+    description: 'Prestation technique qualifiée d installation réseau, configuration routeurs, baies de brassage et dépannage.',
+    famille: 'Services & Prestations',
+    categorie: 'Services & Prestations',
+    marque: 'UGS Tech',
+    uniteMesure: 'Heure',
+    typeArticle: 'Service',
+    prixAchatHT: 0.000,
+    prixVenteHT: 80.000,
+    tva: 19,
+    margeBeneficiaire: 100,
+    stockGlobal: 999,
+    stockSecurite: 0,
+    stocks: { '1': 999, '2': 999, '3': 999 },
+    stockMinimums: { '1': 0, '2': 0, '3': 0 },
+    statut: 'Actif'
+  }
+];
+
+export const mockClients: Client[] = [
+  {
+    id: 'cli-001',
+    code: 'CLT-001',
+    nom: 'Société Sousse Télécom & Service',
+    typeTier: 'Entreprise',
+    matriculeFiscal: '1489623 P/A/M/000',
+    email: 'contact@sousse-telecom.tn',
+    telephone: '+216 73 222 111',
+    adresse: 'Avenue Léopold Senghor, Sousse',
+    ville: 'Sousse',
+    pays: 'Tunisie',
+    contactNom: 'Mehdi Ben Ammar',
+    contactPoste: 'Directeur d Achat',
+    contactTel: '+216 98 456 789',
+    statut: 'Actif',
+    categorie: 'Grand Compte',
+    plafondCredit: 5000.000,
+    delaiPaiement: 30,
+    soldeInitial: 1450.000,
+    soldeCredit: 1450.000,
+    scoreSolvabilite: 92,
+    carteFideliteNumero: 'FID-SOUSSE-001',
+    pointsFidelite: 450,
+    tierFidelite: 'Gold',
+    reductionFidelitePourcent: 5,
+    boutiquePrincipaleNom: 'Dépôt Central Distribution',
+    totalAchatsBoutique: 12450.000,
+    nombrePassagesCaisse: 18,
+    derniereVisiteDate: '2026-10-10'
+  },
+  {
+    id: 'cli-002',
+    code: 'CLT-002',
+    nom: 'Société TechDistribution Gabès SARL',
+    typeTier: 'Entreprise',
+    matriculeFiscal: '1598741 G/A/M/000',
+    email: 'direction@techdistrib-gabes.tn',
+    telephone: '+216 75 600 123',
+    adresse: 'Zone Industrielle Ghannouch, Gabès',
+    ville: 'Gabès',
+    pays: 'Tunisie',
+    contactNom: 'Walid Trabelsi',
+    contactPoste: 'Gérant',
+    contactTel: '+216 97 111 222',
+    statut: 'Actif',
+    categorie: 'PME',
+    plafondCredit: 10000.000,
+    delaiPaiement: 45,
+    soldeInitial: 0.000,
+    soldeCredit: 0.000,
+    scoreSolvabilite: 88,
+    carteFideliteNumero: 'FID-GABES-002',
+    pointsFidelite: 1200,
+    tierFidelite: 'VIP',
+    reductionFidelitePourcent: 7,
+    boutiquePrincipaleNom: 'Boutique Gabès',
+    totalAchatsBoutique: 28900.000,
+    nombrePassagesCaisse: 34,
+    derniereVisiteDate: '2026-10-15'
+  },
+  {
+    id: 'cli-003',
+    code: 'CLT-003',
+    nom: 'Lycée Technique Pilote Gabès',
+    typeTier: 'Institution',
+    matriculeFiscal: '0000000 E/A/M/000',
+    email: 'economat@lycee-pilote-gabes.tn',
+    telephone: '+216 75 270 456',
+    adresse: 'Route de Mahrès, Gabès',
+    ville: 'Gabès',
+    pays: 'Tunisie',
+    contactNom: 'Mounir Chaabane',
+    contactPoste: 'Économe',
+    contactTel: '+216 22 333 444',
+    statut: 'Actif',
+    categorie: 'Marché Public',
+    plafondCredit: 3000.000,
+    delaiPaiement: 60,
+    soldeInitial: 892.300,
+    soldeCredit: 892.300,
+    scoreSolvabilite: 95,
+    carteFideliteNumero: 'FID-SCOLAIRE-003',
+    pointsFidelite: 320,
+    tierFidelite: 'Silver',
+    reductionFidelitePourcent: 3,
+    boutiquePrincipaleNom: 'Boutique Scolaire Plus',
+    totalAchatsBoutique: 8400.000,
+    nombrePassagesCaisse: 12,
+    derniereVisiteDate: '2026-10-12'
+  },
+  {
+    id: 'cli-004',
+    code: 'CLT-PASSAGER',
+    nom: 'Client Comptoir (Passager / Cash)',
+    typeTier: 'Particulier',
+    email: 'client.comptoir@univers-gsm.tn',
+    telephone: '+216 75 655 555',
+    adresse: 'Vente directe en caisse',
+    ville: 'Gabès',
+    pays: 'Tunisie',
+    statut: 'Actif',
+    categorie: 'Particulier',
+    plafondCredit: 0.000,
+    delaiPaiement: 0,
+    soldeInitial: 0.000,
+    soldeCredit: 0.000,
+    scoreSolvabilite: 100,
+    carteFideliteNumero: 'FID-CASH-004',
+    pointsFidelite: 50,
+    tierFidelite: 'Bronze',
+    reductionFidelitePourcent: 0,
+    boutiquePrincipaleNom: 'Boutique Scolaire Plus',
+    totalAchatsBoutique: 4500.000,
+    nombrePassagesCaisse: 150,
+    derniereVisiteDate: '2026-10-18'
+  },
+  {
+    id: 'cli-005',
+    code: 'CLT-005',
+    nom: 'Entreprise Al Boughaz Réseaux Tunis',
+    typeTier: 'Entreprise',
+    matriculeFiscal: '1342109 T/A/M/000',
+    email: 'achats@boughaz-reseaux.tn',
+    telephone: '+216 71 888 999',
+    adresse: 'Les Berges du Lac 1, Tunis',
+    ville: 'Tunis',
+    pays: 'Tunisie',
+    contactNom: 'Sami Bouaziz',
+    contactPoste: 'Chef de Projet IT',
+    contactTel: '+216 98 777 666',
+    statut: 'Actif',
+    categorie: 'Grand Compte',
+    plafondCredit: 8000.000,
+    delaiPaiement: 30,
+    soldeInitial: 1475.600,
+    soldeCredit: 1475.600,
+    scoreSolvabilite: 85,
+    carteFideliteNumero: 'FID-TUNIS-005',
+    pointsFidelite: 600,
+    tierFidelite: 'Gold',
+    reductionFidelitePourcent: 5,
+    boutiquePrincipaleNom: 'Dépôt Central Distribution',
+    totalAchatsBoutique: 15800.000,
+    nombrePassagesCaisse: 14,
+    derniereVisiteDate: '2026-10-18'
+  }
+];
+
+export const mockFournisseurs: Fournisseur[] = [
+  {
+    id: 'frn-001',
+    code: 'FRN-001',
+    nom: 'Global Telecom Import Tunisie SA',
+    typeTier: 'Entreprise',
+    matriculeFiscal: '1098452 T/A/M/000',
+    email: 'commandes@global-telecom.tn',
+    telephone: '+216 71 200 300',
+    adresse: 'Zone Industrielle Charguia II, Tunis',
+    ville: 'Tunis',
+    codePostal: '2035',
+    pays: 'Tunisie',
+    siteWeb: 'www.global-telecom.tn',
+    contactNom: 'Tarek Mansouri',
+    contactPoste: 'Responsable Commercial',
+    contactTel: '+216 98 100 200',
+    contactEmail: 'tarek@global-telecom.tn',
+    statut: 'Actif',
+    categorie: 'Importateur',
+    delaiPaiement: 45,
+    plafondCredit: 50000.000,
+    modeReglementPrefere: 'Virement',
+    rib: '03 001 0100123456789 12',
+    banque: 'BIAT',
+    evaluationQualite: 5,
+    notes: 'Fournisseur principal Smartphones Samsung et Xiaomi. Très fiable.'
+  },
+  {
+    id: 'frn-002',
+    code: 'FRN-002',
+    nom: 'Grossiste Papeterie du Sud SARL',
+    typeTier: 'Entreprise',
+    matriculeFiscal: '1254890 G/A/M/000',
+    email: 'ventes@papeterie-sud.tn',
+    telephone: '+216 74 400 500',
+    adresse: 'Route de Poudreuse, Sfax',
+    ville: 'Sfax',
+    codePostal: '3000',
+    pays: 'Tunisie',
+    siteWeb: 'www.papeterie-sud.tn',
+    contactNom: 'Houda Karray',
+    contactPoste: 'Chef des Ventes',
+    contactTel: '+216 97 555 444',
+    contactEmail: 'houda@papeterie-sud.tn',
+    statut: 'Actif',
+    categorie: 'Grossiste',
+    delaiPaiement: 30,
+    plafondCredit: 20000.000,
+    modeReglementPrefere: 'Chèque',
+    rib: '08 005 0000987654321 45',
+    banque: 'Amen Bank',
+    evaluationQualite: 4,
+    notes: 'Grossiste papier Navigator et fournitures scolaires.'
+  },
+  {
+    id: 'frn-003',
+    code: 'FRN-003',
+    nom: 'Sfax Informatique & Réseaux',
+    typeTier: 'Entreprise',
+    matriculeFiscal: '1187423 S/A/M/000',
+    email: 'commercial@sfax-info.tn',
+    telephone: '+216 74 290 100',
+    adresse: 'Avenue 14 Janvier, Sfax',
+    ville: 'Sfax',
+    codePostal: '3027',
+    pays: 'Tunisie',
+    contactNom: 'Karim Louati',
+    contactPoste: 'Gérant',
+    contactTel: '+216 98 333 222',
+    statut: 'Actif',
+    categorie: 'Grossiste',
+    delaiPaiement: 30,
+    plafondCredit: 30000.000,
+    modeReglementPrefere: 'Virement',
+    rib: '04 002 0100555666777 89',
+    banque: 'Attijari Bank',
+    evaluationQualite: 5,
+    notes: 'Distributeur officiel TP-Link et matériel informatique Lenovo.'
+  }
+];
+
+export const mockVentes: Vente[] = [
+  {
+    id: 'vte-2026-001',
+    projetId: '1',
+    numero: 'FAC-2026-00001',
+    clientId: 'cli-001',
+    clientNom: 'Société Sousse Télécom & Service',
+    auteurId: 'demo-admin',
+    auteurNom: 'Mohamed Ali',
+    date: '2026-10-10',
+    dateVente: '2026-10-10T10:15:00.000Z',
+    dateEcheance: '2026-11-10',
+    montantHT: 3130.000,
+    montantTTC: 3724.700,
+    montantPaye: 3724.700,
+    statut: 'Facture',
+    modePaiement: 'Virement',
+    notes: 'Facture payée par virement bancaire Attijari.',
+    lignes: [
+      { articleId: 'art-001', designation: 'Samsung Galaxy A55 5G (8GB / 256GB)', quantite: 2, prixUnitaireHT: 1380.000, totalHT: 2760.000, tva: 19, totalTTC: 3284.400 },
+      { articleId: 'art-003', designation: 'Chargeur Rapide Samsung 25W Type-C', quantite: 5, prixUnitaireHT: 45.000, totalHT: 225.000, tva: 19, totalTTC: 267.750 },
+      { articleId: 'art-006', designation: 'Routeur TP-Link Archer AX12 WiFi 6', quantite: 1, prixUnitaireHT: 145.000, totalHT: 145.000, tva: 19, totalTTC: 172.550 }
+    ]
+  },
+  {
+    id: 'vte-2026-002',
+    projetId: '2',
+    numero: 'FAC-2026-00002',
+    clientId: 'cli-003',
+    clientNom: 'Lycée Technique Pilote Gabès',
+    auteurId: 'demo-caissier-scolaire',
+    auteurNom: 'Rim Trabelsi',
+    date: '2026-10-12',
+    dateVente: '2026-10-12T14:30:00.000Z',
+    dateEcheance: '2026-11-12',
+    montantHT: 1170.000,
+    montantTTC: 1392.300,
+    montantPaye: 500.000,
+    statut: 'Facture',
+    modePaiement: 'Chèque',
+    notes: 'Acompte chèque 500 DT reçu à la commande.',
+    lignes: [
+      { articleId: 'art-009', designation: 'Pack Fournitures Scolaires Supérieur', quantite: 10, prixUnitaireHT: 65.000, totalHT: 650.000, tva: 19, totalTTC: 773.500 },
+      { articleId: 'art-008', designation: 'Carton Papier A4 80g Navigator', quantite: 10, prixUnitaireHT: 52.000, totalHT: 520.000, tva: 19, totalTTC: 618.800 }
+    ]
+  },
+  {
+    id: 'vte-2026-003',
+    projetId: '3',
+    numero: 'FAC-2026-00003',
+    clientId: 'cli-004',
+    clientNom: 'Client Comptoir (Passager / Cash)',
+    auteurId: 'u-gabes',
+    auteurNom: 'Fatma Zahra',
+    date: '2026-10-15',
+    dateVente: '2026-10-15T11:45:00.000Z',
+    montantHT: 1539.000,
+    montantTTC: 1831.410,
+    montantPaye: 1831.410,
+    statut: 'Facture',
+    modePaiement: 'Espèces',
+    notes: 'Vente directe caisse Boutique Gabès',
+    lignes: [
+      { articleId: 'art-002', designation: 'Xiaomi Redmi Note 13 Pro+ 5G', quantite: 1, prixUnitaireHT: 1450.000, totalHT: 1450.000, tva: 19, totalTTC: 1725.500 },
+      { articleId: 'art-004', designation: 'Écouteurs Bluetooth Anker Soundcore P20i', quantite: 1, prixUnitaireHT: 89.000, totalHT: 89.000, tva: 19, totalTTC: 105.910 }
+    ]
+  },
+  {
+    id: 'vte-2026-004',
+    projetId: '1',
+    numero: 'FAC-2026-00004',
+    clientId: 'cli-005',
+    clientNom: 'Entreprise Al Boughaz Réseaux Tunis',
+    auteurId: 'demo-admin',
+    auteurNom: 'Mohamed Ali',
+    date: '2026-10-18',
+    dateVente: '2026-10-18T09:20:00.000Z',
+    dateEcheance: '2026-11-18',
+    montantHT: 1240.000,
+    montantTTC: 1475.600,
+    montantPaye: 0.000,
+    statut: 'Facture',
+    modePaiement: 'Traite',
+    notes: 'Livraison effectuée avec BL-2026-00004. Règlement à 30 jours.',
+    lignes: [
+      { articleId: 'art-007', designation: 'Câble Réseau UTP Cat6 305m Draka Outdoor', quantite: 3, prixUnitaireHT: 280.000, totalHT: 840.000, tva: 19, totalTTC: 999.600 },
+      { articleId: 'art-010', designation: 'Service de Configuration & Installation Réseau', quantite: 5, prixUnitaireHT: 80.000, totalHT: 400.000, tva: 19, totalTTC: 476.000 }
+    ]
+  }
+];
+
+export const mockAchats: Achat[] = [
+  {
+    id: 'ach-2026-001',
+    projetId: '1',
+    numero: 'ACH-2026-00001',
+    fournisseurId: 'frn-001',
+    fournisseurNom: 'Global Telecom Import Tunisie SA',
+    date: '2026-09-25',
+    dateEcheance: '2026-11-09',
+    montantHT: 8500.000,
+    montantTTC: 10115.000,
+    montantRegle: 10115.000,
+    montantPaye: 10115.000,
+    statut: 'Payé',
+    modePaiement: 'Virement',
+    notes: 'Achat de Smartphones Samsung A55 et Xiaomi Redmi Note 13.',
+    lignes: [
+      { articleId: 'art-001', designation: 'Samsung Galaxy A55 5G (8GB / 256GB)', quantite: 5, prixUnitaireHT: 1150.000, totalHT: 5750.000, totalTTC: 6842.500 },
+      { articleId: 'art-002', designation: 'Xiaomi Redmi Note 13 Pro+ 5G', quantite: 2, prixUnitaireHT: 1220.000, totalHT: 2440.000, totalTTC: 2903.600 }
+    ]
+  },
+  {
+    id: 'ach-2026-002',
+    projetId: '2',
+    numero: 'ACH-2026-00002',
+    fournisseurId: 'frn-002',
+    fournisseurNom: 'Grossiste Papeterie du Sud SARL',
+    date: '2026-10-05',
+    dateEcheance: '2026-11-05',
+    montantHT: 2400.000,
+    montantTTC: 2856.000,
+    montantRegle: 1736.000,
+    montantPaye: 1736.000,
+    statut: 'Reçu',
+    modePaiement: 'Chèque',
+    notes: 'Stock rentrée scolaire papeterie et cartons papier A4.',
+    lignes: [
+      { articleId: 'art-008', designation: 'Carton Papier A4 80g Navigator', quantite: 30, prixUnitaireHT: 52.000, totalHT: 1560.000, totalTTC: 1856.400 },
+      { articleId: 'art-009', designation: 'Pack Fournitures Scolaires Supérieur', quantite: 20, prixUnitaireHT: 42.000, totalHT: 840.000, totalTTC: 999.600 }
+    ]
+  }
+];
+
+export const mockReglements: Reglement[] = [
+  {
+    id: 'reg-001',
+    projetId: '1',
+    numeroPiece: 'REG-2026-00001',
+    type: 'Encaissement',
+    tierId: 'cli-001',
+    tierNom: 'Société Sousse Télécom & Service',
+    tierType: 'Client',
+    documentRef: 'FAC-2026-00001',
+    date: '2026-10-10',
+    dateReglement: '2026-10-10T11:00:00.000Z',
+    montant: 3724.700,
+    modePaiement: 'Virement',
+    banque: 'Attijari Bank',
+    referencePaiement: 'VIR-8899221',
+    notes: 'Règlement intégral facture FAC-2026-00001',
+    statut: 'Validé'
+  },
+  {
+    id: 'reg-002',
+    projetId: '2',
+    numeroPiece: 'REG-2026-00002',
+    type: 'Encaissement',
+    tierId: 'cli-003',
+    tierNom: 'Lycée Technique Pilote Gabès',
+    tierType: 'Client',
+    documentRef: 'FAC-2026-00002',
+    date: '2026-10-12',
+    dateReglement: '2026-10-12T14:40:00.000Z',
+    montant: 500.000,
+    modePaiement: 'Chèque',
+    banque: 'STB',
+    referencePaiement: 'CHQ-004412',
+    notes: 'Acompte sur commande fournitures',
+    statut: 'Validé'
+  },
+  {
+    id: 'reg-003',
+    projetId: '3',
+    numeroPiece: 'REG-2026-00003',
+    type: 'Encaissement',
+    tierId: 'cli-004',
+    tierNom: 'Client Comptoir (Passager / Cash)',
+    tierType: 'Client',
+    documentRef: 'FAC-2026-00003',
+    date: '2026-10-15',
+    dateReglement: '2026-10-15T11:45:00.000Z',
+    montant: 1831.410,
+    modePaiement: 'Espèces',
+    notes: 'Encaissement caisse Boutique Gabès',
+    statut: 'Validé'
+  },
+  {
+    id: 'reg-004',
+    projetId: '1',
+    numeroPiece: 'REG-2026-00004',
+    type: 'Décaissement',
+    tierId: 'frn-001',
+    tierNom: 'Global Telecom Import Tunisie SA',
+    tierType: 'Fournisseur',
+    documentRef: 'ACH-2026-00001',
+    date: '2026-09-28',
+    dateReglement: '2026-09-28T09:30:00.000Z',
+    montant: 10115.000,
+    modePaiement: 'Virement',
+    banque: 'BIAT',
+    referencePaiement: 'VIR-FRN-7711',
+    notes: 'Paiement commande ACH-2026-00001',
+    statut: 'Validé'
+  }
+];
+
 export const mockRelances: any[] = [];
-export const mockMouvements: any[] = [];
+
+export const mockMouvements: MouvementStock[] = [
+  {
+    id: 'mvt-001',
+    articleId: 'art-001',
+    articleNom: 'Samsung Galaxy A55 5G (8GB / 256GB)',
+    articleCode: 'ART-GSM-001',
+    projetId: '1',
+    projetNom: 'Dépôt Central Distribution',
+    type: 'Entrée',
+    quantite: 5,
+    quantiteAvant: 23,
+    quantiteApres: 28,
+    date: '2026-09-26 09:30',
+    dateFormatted: '26/09/2026',
+    motif: 'Achat Fournisseur Global Telecom (ACH-2026-00001)',
+    auteur: 'Mohamed Ali'
+  },
+  {
+    id: 'mvt-002',
+    articleId: 'art-001',
+    articleNom: 'Samsung Galaxy A55 5G (8GB / 256GB)',
+    articleCode: 'ART-GSM-001',
+    projetId: '1',
+    projetNom: 'Dépôt Central Distribution',
+    type: 'Sortie',
+    quantite: 2,
+    quantiteAvant: 28,
+    quantiteApres: 26,
+    date: '2026-10-10 10:15',
+    dateFormatted: '10/10/2026',
+    motif: 'Vente Facture FAC-2026-00001',
+    auteur: 'Mohamed Ali'
+  },
+  {
+    id: 'mvt-003',
+    articleId: 'art-008',
+    articleNom: 'Carton Papier A4 80g Navigator',
+    articleCode: 'ART-PAP-008',
+    projetId: '1',
+    projetNom: 'Dépôt Central Distribution',
+    type: 'Transfert',
+    quantite: 20,
+    quantiteAvant: 160,
+    quantiteApres: 140,
+    date: '2026-10-08 14:00',
+    dateFormatted: '08/10/2026',
+    motif: 'Transfert vers Boutique Scolaire Plus (BS-2026-00001)',
+    auteur: 'Mohamed Ali'
+  }
+];
+
 export const mockMonthlyData: Record<string, Array<{ mois: string; ventes: number; achats: number }>> = {
-  'all': [],
-  '1': [],
-  '2': [],
-  '3': []
+  'all': [
+    { mois: 'Mai', ventes: 18500, achats: 12200 },
+    { mois: 'Juin', ventes: 22400, achats: 15100 },
+    { mois: 'Juil', ventes: 21100, achats: 14000 },
+    { mois: 'Août', ventes: 31000, achats: 19500 },
+    { mois: 'Sept', ventes: 38500, achats: 24800 },
+    { mois: 'Oct', ventes: 29800, achats: 18900 }
+  ],
+  '1': [
+    { mois: 'Mai', ventes: 11000, achats: 8000 },
+    { mois: 'Juin', ventes: 13500, achats: 9500 },
+    { mois: 'Juil', ventes: 12800, achats: 9000 },
+    { mois: 'Août', ventes: 17000, achats: 11000 },
+    { mois: 'Sept', ventes: 21000, achats: 14000 },
+    { mois: 'Oct', ventes: 16500, achats: 11200 }
+  ],
+  '2': [
+    { mois: 'Mai', ventes: 4200, achats: 2500 },
+    { mois: 'Juin', ventes: 5100, achats: 3200 },
+    { mois: 'Juil', ventes: 4800, achats: 3000 },
+    { mois: 'Août', ventes: 9500, achats: 5500 },
+    { mois: 'Sept', ventes: 12500, achats: 7800 },
+    { mois: 'Oct', ventes: 8200, achats: 5000 }
+  ],
+  '3': [
+    { mois: 'Mai', ventes: 3300, achats: 1700 },
+    { mois: 'Juin', ventes: 3800, achats: 2400 },
+    { mois: 'Juil', ventes: 3500, achats: 2000 },
+    { mois: 'Août', ventes: 4500, achats: 3000 },
+    { mois: 'Sept', ventes: 5000, achats: 3000 },
+    { mois: 'Oct', ventes: 5100, achats: 2700 }
+  ]
 };
-export const mockObjectifs: any[] = [];
-export const mockBonsDeLivraison: BonDeLivraison[] = [];
+
+export const mockObjectifs: any[] = [
+  { id: 'obj-1', type: 'Boutique', cibleId: '1', cibleNom: 'Dépôt Central Distribution', periode: '2026-10', montantCible: 25000 },
+  { id: 'obj-2', type: 'Boutique', cibleId: '2', cibleNom: 'Boutique Scolaire Plus', periode: '2026-10', montantCible: 12000 },
+  { id: 'obj-3', type: 'Boutique', cibleId: '3', cibleNom: 'Boutique Gabès', periode: '2026-10', montantCible: 8000 }
+];
+
+export const mockBonsDeLivraison: BonDeLivraison[] = [
+  {
+    id: 'bl-2026-001',
+    numero: 'BL-2026-00001',
+    projetId: '1',
+    boutiqueNom: 'Dépôt Central Distribution',
+    dateCreation: '2026-10-10',
+    dateLivraison: '2026-10-10',
+    statut: 'Livré',
+    factureRef: 'FAC-2026-00001',
+    clientId: 'cli-001',
+    clientNom: 'Société Sousse Télécom & Service',
+    adresseLivraison: 'Avenue Léopold Senghor, Sousse',
+    telephoneClient: '+216 73 222 111',
+    transporteur: 'Transport UGS Inter-villes',
+    chauffeur: 'Kamel Mahmoudi',
+    immatriculation: '185 TN 4410',
+    notes: 'Livraison conforme sous réserve de déballage.',
+    isStockDecremented: true,
+    montantHT: 2985.000,
+    montantTTC: 3552.150,
+    lignes: [
+      { articleId: 'art-001', designation: 'Samsung Galaxy A55 5G (8GB / 256GB)', qteCommandee: 2, qteDejaLivree: 0, qteALivrer: 2, qteLivree: 2, prixUnitaireHT: 1380.000, totalHT: 2760.000, totalTTC: 3284.400 },
+      { articleId: 'art-003', designation: 'Chargeur Rapide Samsung 25W Type-C', qteCommandee: 5, qteDejaLivree: 0, qteALivrer: 5, qteLivree: 5, prixUnitaireHT: 45.000, totalHT: 225.000, totalTTC: 267.750 }
+    ]
+  },
+  {
+    id: 'bl-2026-002',
+    numero: 'BL-2026-00002',
+    projetId: '2',
+    boutiqueNom: 'Boutique Scolaire Plus',
+    dateCreation: '2026-10-12',
+    dateLivraison: '2026-10-13',
+    statut: 'Livré',
+    factureRef: 'FAC-2026-00002',
+    clientId: 'cli-003',
+    clientNom: 'Lycée Technique Pilote Gabès',
+    adresseLivraison: 'Route de Mahrès, Gabès',
+    telephoneClient: '+216 75 270 456',
+    notes: 'Livraison à l économat du lycée.',
+    isStockDecremented: true,
+    montantHT: 650.000,
+    montantTTC: 773.500,
+    lignes: [
+      { articleId: 'art-009', designation: 'Pack Fournitures Scolaires Supérieur', qteCommandee: 10, qteDejaLivree: 0, qteALivrer: 10, qteLivree: 10, prixUnitaireHT: 65.000, totalHT: 650.000, totalTTC: 773.500 }
+    ]
+  }
+];
+
 export const mockStockOperations: StockOperation[] = [];
 export const mockRetoursMarchandise: RetourMarchandise[] = [];
 export const mockRetoursVente: RetourVente[] = [];
-export const mockBonsDAchat: BonDAchat[] = [];
-export const mockBonsDeSortie: BonDeSortie[] = [];
-export const mockSessionsCaisse: SessionCaisse[] = [];
+
+export const mockBonsDAchat: BonDAchat[] = [
+  {
+    id: 'ba-2026-001',
+    numero: 'BA-2026-00001',
+    projetId: '1',
+    boutiqueNom: 'Dépôt Central Distribution',
+    dateCreation: '2026-09-25',
+    datePrevueReception: '2026-09-26',
+    statut: 'RÉCEPTIONNÉ',
+    fournisseurId: 'frn-001',
+    fournisseurNom: 'Global Telecom Import Tunisie SA',
+    matriculeFiscalFournisseur: '1098452 T/A/M/000',
+    observations: 'Réception complète vérifiée en dépôt.',
+    montantHT: 8500.000,
+    montantTTC: 10115.000,
+    lignes: [
+      { articleId: 'art-001', designation: 'Samsung Galaxy A55 5G (8GB / 256GB)', qteCommandee: 5, qteDejaRecue: 0, qteARecevoir: 0, qteRecue: 5, prixUnitaireHT: 1150.000, totalHT: 5750.000, totalTTC: 6842.500 },
+      { articleId: 'art-002', designation: 'Xiaomi Redmi Note 13 Pro+ 5G', qteCommandee: 2, qteDejaRecue: 0, qteARecevoir: 0, qteRecue: 2, prixUnitaireHT: 1220.000, totalHT: 2440.000, totalTTC: 2903.600 }
+    ]
+  }
+];
+
+export const mockBonsDeSortie: BonDeSortie[] = [
+  {
+    id: 'bs-2026-001',
+    numero: 'BS-2026-00001',
+    projetId: '1',
+    boutiqueNom: 'Dépôt Central Distribution',
+    typeSortie: 'Transfert Inter-Boutique',
+    dateCreation: '2026-10-08',
+    dateSortie: '2026-10-08',
+    statut: 'VALIDÉ',
+    projetDestinationId: '2',
+    projetDestinationNom: 'Boutique Scolaire Plus',
+    demandeur: 'Sami Ben Ali',
+    validePar: 'Mohamed Ali',
+    motif: 'Transfert',
+    notes: 'Caisse de 20 rames Navigator expédiée.',
+    montantHT: 1040.000,
+    montantTTC: 1237.600,
+    lignes: [
+      { articleId: 'art-008', designation: 'Carton Papier A4 80g Navigator', stockDisponible: 140, qteDemandee: 20, qteSortie: 20, stockApres: 120, prixUnitaireHT: 52.000, totalHT: 1040.000 }
+    ]
+  }
+];
+
+export const mockSessionsCaisse: SessionCaisse[] = [
+  {
+    id: 'session-scol-001',
+    projetId: '2',
+    utilisateurId: 'demo-caissier-scolaire',
+    utilisateurNom: 'Rim Trabelsi (Boutique Scolaire)',
+    dateOuverture: '2026-10-19T07:30:00.000Z',
+    soldeInitial: 250.000,
+    soldeFinalTheorique: 1642.300,
+    statut: 'Ouverte',
+    notes: 'Session caisse du jour ouverte'
+  },
+  {
+    id: 'session-gb-000',
+    projetId: '3',
+    utilisateurId: 'u-gabes',
+    utilisateurNom: 'Fatma Zahra (Boutique Gabès)',
+    dateOuverture: '2026-10-18T08:00:00.000Z',
+    dateFermeture: '2026-10-18T18:00:00.000Z',
+    soldeInitial: 200.000,
+    soldeFinalTheorique: 2031.410,
+    soldeFinalReel: 2031.410,
+    ecart: 0.000,
+    statut: 'Fermee',
+    notes: 'Clôture de caisse conforme.'
+  }
+];
+
 export const mockActionLogsCaisse: SessionActionLog[] = [];

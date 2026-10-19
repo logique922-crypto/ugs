@@ -2133,7 +2133,7 @@ export function Articles({ currentUser, selectedProjectId, articles, onArticlesC
                       </label>
                       {(() => {
                         const stocksObj = (formData.stocks && typeof formData.stocks === 'object' && !Array.isArray(formData.stocks)) ? formData.stocks : {};
-                        const totalStockVal = Object.values(stocksObj).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) || formData.stock || 0;
+                        const totalStockVal = Object.values(stocksObj).reduce((a: number, b: unknown) => a + (Number(b) || 0), 0) || formData.stock || 0;
                         return (
                           <>
                             <input 
@@ -2209,7 +2209,7 @@ export function Articles({ currentUser, selectedProjectId, articles, onArticlesC
                                   const val = parseInt(e.target.value) || 0;
                                   const currentStocks = { ...(typeof formData.stocks === 'object' && formData.stocks !== null && !Array.isArray(formData.stocks) ? formData.stocks : {}) };
                                   currentStocks[p.id] = val;
-                                  const newTotal = Object.values(currentStocks).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0);
+                                  const newTotal = Object.values(currentStocks).reduce((a: number, b: unknown) => a + (Number(b) || 0), 0);
                                   setFormData(prev => ({ ...prev, stocks: currentStocks, stock: newTotal }));
                                 }}
                               />
